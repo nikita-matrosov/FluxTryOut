@@ -1,0 +1,3 @@
+var TicketAppDispatcher = (function () {
+
+})();
