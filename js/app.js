@@ -1,10 +1,12 @@
+/**
+ * @jsx React.DOM
+ */
+var TicketApp = app.TicketApp;
 
-/*
-var React = require('react');
-
-var TodoApp = require('./components/TodoApp.react');
+app.ActionCreator.receiveAll(app.TicketBack.getTickets());
 
 React.renderComponent(
-    <TodoApp />,
-    document.getElementById('todoapp')
-);*/
+    <TicketApp />,
+    document.getElementById('tickets')
+);
+

@@ -1,9 +1,12 @@
-var ActionCreator = (function () {
+(function () {
+    var app = this;
 
-    this.receiveAll = function(rawMessages) {
-        TicketAppDispatcher.handleServerAction({
-            type: ActionTypes.RECEIVE_RAW_MESSAGES,
-            rawMessages: rawMessages
-        });
+    this.ActionCreator = {
+        receiveAll: function(rawTickets) {
+            app.TicketAppDispatcher.handleServerAction({
+                type: app.Actions.RECEIVE_RAW_TICKETS,
+                rawTickets: rawTickets
+            });
+        }
     }
-})();
+}).call(app);

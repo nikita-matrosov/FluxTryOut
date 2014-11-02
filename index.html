@@ -5,10 +5,27 @@
     <title>Tickets</title>
     <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/style.css">
+
+    <script src="js/libs/react/react-with-addons.js"></script>
+    <script src="js/libs/react/JSXTransformer.js"></script>
+    <script src="js/libs/flux/invariant.js"></script>
+    <script src="js/libs/flux/Dispatcher.js"></script>
+    <script src="js/libs/EventEmitter.js"></script>
+    <script src="js/libs/merge.js"></script>
+
+    <script type="text/javascript">
+        var app = {};
+    </script>
 </head>
 <body>
 <section id="tickets"></section>
-<script src="js/react-0.11.2/build/react-with-addons.js"></script>
-<script src="js/react-0.11.2/build/JSXTransformer.js"></script>
+
+<script src="js/dispatcher/TicketAppDispatcher.js"></script>
+<script src="js/action/ActionCreator.js"></script>
+<script src="js/TicketAppConstants.js"></script>
+<script src="js/TicketBack.js"></script>
+<script src="js/stores/TicketStore.js"></script>
+<script src="js/components/TicketApp.react.js" type="text/jsx"></script>
+<script src="js/app.js" type="text/jsx"></script>
 </body>
 </html>
