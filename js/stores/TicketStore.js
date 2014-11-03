@@ -6,6 +6,15 @@
     //model
     var _tickets = [];
 
+    //item model
+    this.Ticket = function (id, name, description, price, buyer) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.buyer = buyer;
+        this.description = description || "";
+    };
+
 
     //TicketStore public API//
 

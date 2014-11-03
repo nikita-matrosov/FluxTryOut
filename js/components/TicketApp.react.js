@@ -2,8 +2,8 @@
  * @jsx React.DOM
  */
 (function () {
-    var React = window.React;
     var app = this;
+    var React = window.React;
 
     this.TicketApp = React.createClass({
 
@@ -20,10 +20,11 @@
         },
 
         render: function () {
+            var ticketItems = this.state.tickets.map(_getTicketItemView);
             return (
-                <div>
-                    {this.state.tickets}
-                </div>
+                <table className="ticket-table">
+                    {ticketItems}
+                </table>
                 );
         }
     });
@@ -33,6 +34,13 @@
         return {
             tickets: app.TicketStore.getAll()
         }
+    };
+
+    var TicketItem = app.TicketItem;
+    var _getTicketItemView = function (ticket) {
+        return (
+            <TicketItem ticket={ticket} />
+            );
     };
 
     /**
