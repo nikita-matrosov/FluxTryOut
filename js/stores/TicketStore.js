@@ -32,9 +32,9 @@
 
         // sequential order
         nextOrder: function () {
-            return this.length ? this.last().get('order') + 1 : 1;
+            return this.length ? this.last().get('id') + 1 : 1;
         },
-        comparator: 'order'
+        comparator: 'id'
     });
 
 
@@ -51,6 +51,9 @@
         },
         getAll: function () {
             return _tickets;
+        },
+        getFree: function () {
+            return _tickets.free();
         },
 
         addChangeListener: function (callback) {
@@ -93,8 +96,7 @@
     };
 
     var addNewTicket = function (ticket) {
-        ticket.order = _tickets.nextOrder();
-        ticket.id = new Date();
+        ticket.id = _tickets.nextOrder();
         _tickets.add(ticket);
     };
 

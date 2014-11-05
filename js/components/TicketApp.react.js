@@ -9,14 +9,7 @@
     app.TicketApp = React.createClass({
 
         render: function () {
-            var shownTickets = this.state.tickets.filter(function (ticket) {
-                switch (this.state.showing) {
-                    case 'free':
-                        return ticket.get('price') == 0;
-                    default:
-                        return true;
-                }
-            }, this);
+            var shownTickets = this.state.showing == 'free'? app.TicketStore.getFree() : app.TicketStore.getAll();
             var ticketItems = shownTickets.map(_getTicketItemView);
             return (
                 <div className="container">
@@ -32,7 +25,8 @@
                     <table className="ticket-table">
                         <tbody>{ticketItems}</tbody>
                     </table>
-                    <a href="#/free"> Free tickets (with price = 0)</a>
+                    <a href="#/free"> Free tickets (with price = 0)</a><br />
+                    <a href="#"> All tickets</a>
                 </div>
                 );
         },
@@ -65,7 +59,7 @@
             var newTicketName = this.refs.name.getDOMNode().value.trim();
             var newTicketPrice = this.refs.price.getDOMNode().value.trim();
             if (newTicketName && newTicketPrice) {
-                app.ActionCreator.newTicket({name: newTicketName, price: newTicketPrice});
+                app.ActionCreator.newTicket({name: newTicketName, price: +newTicketPrice});
 
                 this.refs.name.getDOMNode().value = '';
                 this.refs.price.getDOMNode().value = '';
