@@ -8,8 +8,14 @@
 
     app.TicketApp = React.createClass({
 
+        mixins: [app.BackboneStoreMixin],
+
+        getBackboneStore: function () {
+            return app.TicketStore;
+        },
+
         render: function () {
-            var shownTickets = this.state.showing == 'free'? app.TicketStore.getFree() : app.TicketStore.getAll();
+            var shownTickets = this.state.showing == 'free'? app.TicketStore.freeTickets() : app.TicketStore.allTickets();
             var ticketItems = shownTickets.map(_getTicketItemView);
             return (
                 <div className="container">
@@ -31,14 +37,7 @@
                 );
         },
 
-        getInitialState: function () {
-            //return a view model
-            return _getTicketsState();
-        },
-
         componentDidMount: function () {
-            app.TicketStore.addChangeListener(this._onChange);
-
             var Router = Backbone.Router.extend({
                 routes: {
                     '': 'all',
@@ -55,6 +54,11 @@
             Backbone.history.start();
         },
 
+        getInitialState: function () {
+            //return a view model
+            return _getTicketsState();
+        },
+
         handleNewTicket: function (event) {
             var newTicketName = this.refs.name.getDOMNode().value.trim();
             var newTicketPrice = this.refs.price.getDOMNode().value.trim();
@@ -65,23 +69,13 @@
                 this.refs.price.getDOMNode().value = '';
             }
             return false;
-        },
-
-        /**
-         * Event handler for 'change' events coming from the TicketStore
-         */
-        _onChange: function () {
-            this.setState(_getTicketsState());
-        },
-        componentWillUnmount: function () {
-            app.TicketStore.removeChangeListener(this._onChange);
         }
     });
 
     //view model
     var _getTicketsState = function () {
         return {
-            tickets: app.TicketStore.getAll(),
+            tickets: app.TicketStore.allTickets(),
             showing: 'all'
         }
     };

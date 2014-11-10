@@ -1,8 +1,6 @@
 (function () {
     var app = this;
     var Backbone = window.Backbone;
-    var eventEmitter = window.EventEmitter;
-    var CHANGE_EVENT = 'TICKETS_CHANGE_EVENT';
 
     //item model
     app.Ticket = Backbone.Model.extend({
@@ -19,88 +17,71 @@
         }
     });
 
-    var Tickets = Backbone.Collection.extend({
-        // Reference to this collection's model.
-        model: app.Ticket,
 
+    //TicketStore public API//
+    //It is strongly recommended to use only methods provided from the store
+    //even though lots of other methods are exposed
+
+
+    var TicketManager = Backbone.Collection.extend({
+
+        model: app.Ticket,
         localStorage: new Backbone.LocalStorage('tickets-local'),
 
+
+        //public getters to fetch data from the store//
+
         // Filter down the list of all tickets that are free.
-        free: function () {
+        freeTickets: function () {
             return this.where({price: 0});
         },
 
+        allTickets: function () {
+            return this.models;
+        },
+
+
+        //the only place to handle modifying the store according to the business logic//
+        dispatchCallback: function (payload) {
+            //here backbone events are used which is generated on every action with collections
+            //React component render itself on this event via the help from BackboneStoreMixin
+
+            //To customize behaviour on model event we can use events like: this.trigger("CUSTOM_EVENT");
+            //and fulfill the react component with corresponding handling logic
+
+            var action = payload.action;
+
+            switch (action.type) {
+
+                case app.Actions.RECEIVE_RAW_TICKETS:
+                    this.add(action.rawTickets);
+                    break;
+
+                case app.Actions.NEW_TICKET_CREATED:
+                    action.ticketData.id = this._nextOrder();
+                    this.add(action.ticketData);
+                    break;
+
+                default:
+                // do nothing
+            }
+        },
+        initialize: function () {
+            this.dispatchToken = app.TicketAppDispatcher.register(this.dispatchCallback.bind(this));
+        },
+
+
+        //helper methods section//
+
         // sequential order
-        nextOrder: function () {
+        _nextOrder: function () {
             return this.length ? this.last().get('id') + 1 : 1;
         },
         comparator: 'id'
     });
 
 
-    //model
-    var _tickets = new Tickets();
+    //export the store's singleton
+    app.TicketStore = new TicketManager();
 
-
-    //TicketStore public API//
-
-    app.TicketStore = merge(eventEmitter.prototype, {
-
-        get: function (id) {
-            return _tickets[id];
-        },
-        getAll: function () {
-            return _tickets;
-        },
-        getFree: function () {
-            return _tickets.free();
-        },
-
-        addChangeListener: function (callback) {
-            this.on(CHANGE_EVENT, callback);
-        },
-        removeChangeListener: function (callback) {
-            this.removeListener(CHANGE_EVENT, callback);
-        }
-    });
-
-    app.TicketStore.dispatchToken = app.TicketAppDispatcher.register(function (payload) {
-            var action = payload.action;
-
-            switch (action.type) {
-
-                case app.Actions.RECEIVE_RAW_TICKETS:
-                    emitChange(function () {
-                        addTickets(action.rawTickets);
-                    });
-                    break;
-
-                case app.Actions.NEW_TICKET_CREATED:
-                    emitChange(function () {
-                        addNewTicket(action.ticketData);
-                    });
-                    break;
-
-                default:
-                // do nothing
-            }
-
-        }
-    );
-
-    //private methods section//
-
-    var emitChange = function(eventHandler) {
-        eventHandler();
-        app.TicketStore.emit(CHANGE_EVENT);
-    };
-
-    var addNewTicket = function (ticket) {
-        ticket.id = _tickets.nextOrder();
-        _tickets.add(ticket);
-    };
-
-    var addTickets = function (tickets) {
-        _tickets.add(tickets)
-    };
 } ).call(app);
